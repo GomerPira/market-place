@@ -1,0 +1,99 @@
+# NexusMarket Backend — Docker Compose
+#
+# Stack emparejado:
+#   - bank-api : backend de NexusMarket (FastAPI, puerto 8000)
+#   - mysql-db : base de datos relacional (MySQL 8.0, puerto 3306)
+#   - mongo-db: base de datos de auditoría (MongoDB 6.0, puerto 27017)
+#
+# Reglas de red:
+#   - En el contenedor, el backend se comunica con MySQL/Mongo usando los
+#     nombres de los servicios (mysql-db, mongo-db), nunca localhost.
+#   - Desde el host, MySQL se puede acceder en localhost:3306 y Mongo en 27017.
+#
+# Uso:
+#   docker compose up --build -d
+#   docker compose ps
+#   docker compose logs -f bank-api
+
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: nexusmarket-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: nexusmarket
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - nexusmarket-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_password"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongo-db:
+    image: mongo:6.0
+    container_name: nexusmarket-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - nexusmarket-net
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  bank-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nexusmarket-backend:local
+    container_name: nexusmarket-backend
+    restart: on-failure:5
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      mongo-db:
+        condition: service_healthy
+    environment:
+      # Puerto interno del backend
+      SERVER_PORT: "8000"
+      # Host y puerto de MySQL (nombre del servicio, no localhost)
+      DATABASE_HOST: mysql-db
+      DATABASE_PORT: "3306"
+      DATABASE_NAME: nexusmarket
+      DATABASE_USER: root
+      DATABASE_PASSWORD: root_password
+      # MongoDB (por ahora solo se define la URI; el código puede usarlo opcionalmente)
+      MONGO_URI: mongodb://mongo-db:27017/nexusmarket_audit
+      # JWT
+      JWT_SECRET: nexusmarket-dev-secret-change-me
+      JWT_EXPIRES_IN: "3600"
+      # CORS
+      FRONTEND_ORIGIN: http://localhost:5173
+    ports:
+      - "8000:8000"
+    networks:
+      - nexusmarket-net
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+networks:
+  nexusmarket-net:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  mongo_data:
