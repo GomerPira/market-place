@@ -82,6 +82,10 @@ class NitNoValido(DominioError):
     pass
 
 
+class RolNoValido(DominioError):
+    """El rol de usuario no es válido."""
+    pass
+
 class DocumentoNoValido(DominioError):
-    """El documento de identidad no es válido."""
+    """El documento de identificación no es válido."""
     pass

@@ -5,7 +5,7 @@ CompradorRepository — Puerto de salida para compradores.
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from ...entities.comprador import Comprador
+from ..entities.comprador import Comprador
 
 
 class CompradorRepositoryOutputPort(ABC):

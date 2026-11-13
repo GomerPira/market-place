@@ -8,7 +8,7 @@ La implementación concreta puede ser en memoria, MySQL, PostgreSQL, etc.
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from ...entities.product import Producto
+from ..entities.product import Producto
 
 
 class ProductRepositoryOutputPort(ABC):

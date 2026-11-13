@@ -7,7 +7,7 @@ Define cómo se pueden obtener y guardar existencias por bodega.
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from ...entities.inventario import Inventario
+from ..entities.inventario import Inventario
 
 
 class InventarioRepositoryOutputPort(ABC):

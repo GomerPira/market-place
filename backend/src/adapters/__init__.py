@@ -2,10 +2,10 @@
 Adaptadores de NexusMarket.
 """
 
-from src.adapters.rest import rest_routers
 from src.adapters.persistence import persistence_adapters
+from src.adapters.rest import register_rest_adapters
 
 adapters = [
-    rest_routers,
+    register_rest_adapters,
     persistence_adapters,
 ]

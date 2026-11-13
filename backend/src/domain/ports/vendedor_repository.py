@@ -5,7 +5,7 @@ VendedorRepository — Puerto de salida para vendedores.
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from ...entities.vendedor import Vendedor
+from ..entities.vendedor import Vendedor
 
 
 class VendedorRepositoryOutputPort(ABC):

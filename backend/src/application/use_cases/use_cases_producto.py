@@ -8,7 +8,7 @@ Solo usa los contratos definidos en `src.domain.ports`.
 
 from typing import List, Optional
 
-from ...application.repositories import ProductRepositoryPort  # se define abajo
+from ...domain.ports.product_repository import ProductRepositoryOutputPort
 from ...domain.entities.product import Producto
 from ...domain.ports import ProductRepositoryOutputPort, RegistrarProductoInputPort, ListarProductosInputPort, BuscarProductoPorIdInputPort
 
@@ -19,7 +19,7 @@ class ProductUseCases:
     Los casos de uso delegan a un repositorio (que puede ser en memoria, MySQL, etc.).
     """
 
-    def __init__(self, repo: ProductRepositoryPort):
+    def __init__(self, repo: ProductRepositoryOutputPort):
         self.repo = repo
 
     def registrar(self, titulo, descripcion, tipo, precio_base, vendedor_id=None):

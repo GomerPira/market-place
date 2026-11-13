@@ -5,7 +5,7 @@ UsuarioRepository — Puerto de salida para usuarios.
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from ...entities.usuario import Usuario
+from ..entities.usuario import Usuario
 
 
 class UsuarioRepositoryOutputPort(ABC):

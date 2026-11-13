@@ -5,7 +5,7 @@ CarritoUseCases — Puertos de entrada para gestión de carrito.
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from ...entities.carrito import Carrito
+from ..entities.carrito import Carrito
 
 
 class AgregarAlCarritoInputPort(ABC):

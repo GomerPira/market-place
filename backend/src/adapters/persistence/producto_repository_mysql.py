@@ -4,6 +4,7 @@ ProductoRepositoryMySql — Adaptador de persistencia para productos (MySQL).
 Este archivo implementa el puerto `ProductRepositoryOutputPort`.
 Su objetivo es adaptar las consultas SQL a la capa de dominio.
 """
+from typing import Optional
 
 from src.domain.entities.product import Producto
 from src.domain.ports.product_repository import ProductRepositoryOutputPort

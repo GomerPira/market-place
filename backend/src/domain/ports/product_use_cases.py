@@ -12,8 +12,7 @@ Caso de uso:
 from abc import ABC, abstractmethod
 from typing import List, Optional
 
-from ...entities.product import Producto
-
+from ..entities.product import Producto
 
 class RegistrarProductoInputPort(ABC):
     """
