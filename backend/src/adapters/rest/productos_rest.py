@@ -1,58 +1,100 @@
+
 """
 Adaptador REST de productos (FastAPI).
 
-Este archivo conecta la API HTTP con los casos de uso de la app.
-El adaptador recibe la petición HTTP, la valida, llama al caso de uso del
-dominio, y devuelve una respuesta HTTP.
-
-Es el único archivo que debería estar preocupado por los códigos HTTP
-(200, 404, 422, etc.) y por los serializadores.
+Conecta las peticiones HTTP con los casos de uso
+y el repositorio MySQL.
 """
 
-from fastapi import APIRouter, HTTPException, status
+from decimal import Decimal
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
 
 from ...application.use_cases.use_cases_producto import ProductUseCases
-from ...domain.entities.product import Producto
-from ...domain.value_objects.errors import ProductoNoValido, TipoNoValido, EstadoNoValido
+from ...adapters.persistence.producto_repository_mysql import ProductoRepositoryMySql
+from ...infrastructure.database.database import get_session
+from ...domain.value_objects.errors import (
+    ProductoNoValido,
+    TipoNoValido,
+    EstadoNoValido,
+)
 
 router = APIRouter(prefix="/productos", tags=["productos"])
 
 
-def crear_producto_use_case(repo):
-    """
-    Crea el caso de uso de producto con un repositorio.
-    """
+def crear_producto_use_case(session: Session):
+    repo = ProductoRepositoryMySql(session)
     return ProductUseCases(repo)
+
+
+def convertir_producto(producto):
+    return {
+        "id": producto.id,
+        "titulo": producto.titulo,
+        "descripcion": producto.descripcion,
+        "tipo": producto.tipo.value,
+        "precio_base": float(producto.precio_base.cantidad),
+        "moneda": producto.precio_base.moneda,
+        "estado": producto.estado.value,
+        "imagenes": producto.imagenes,
+        "peso_kg": (
+            float(producto.peso_kg)
+            if producto.peso_kg is not None else None
+        ),
+        "dimensiones": producto.dimensiones,
+        "creado_en": producto.creado_en.isoformat(),
+        "actualizado_en": (
+            producto.actualizado_en.isoformat()
+            if producto.actualizado_en else None
+        ),
+        "vendedor_id": producto.vendedor_id,
+        "variantes": [
+            {
+                "id": variante.id,
+                "sku": variante.sku,
+                "atributo": variante.atributo,
+                "valor": variante.valor,
+                "precio_adicional": float(variante.precio_adicional),
+            }
+            for variante in producto.variantes
+        ],
+    }
 
 
 @router.post(
     "/",
     response_model=dict,
+    status_code=status.HTTP_201_CREATED,
     summary="Crear un producto",
-    description="Permite a un vendedor registrar un producto en el catálogo.",
 )
 async def crear_producto(
     titulo: str,
     descripcion: str,
     tipo: str,
-    precio_base: float,
+    precio_base: Decimal,
     vendedor_id: str | None = None,
+    session: Session = Depends(get_session),
 ):
-    """
-    Crear un producto (dummy por ahora).
-    """
     try:
-        # Aquí normalmente validaríamos que vendedor_id exista y esté activo.
-        # Como aún no tenemos la autenticación, no validamos vendedor_id.
-        if tipo not in ("FISICO", "DIGITAL"):
-            raise TipoNoValido(f"Tipo no válido: {tipo}. Valores permitidos: FISICO, DIGITAL.")
+        use_case = crear_producto_use_case(session)
 
-        use_case = ProductUseCases(repo=None)  # En el futuro se inyecta el repositorio real
-        producto = use_case.registrar(titulo, descripcion, tipo, precio_base, vendedor_id)
-        return {"mensaje": "Producto creado", "id": producto.id}
+        producto = use_case.registrar(
+            titulo,
+            descripcion,
+            tipo,
+            precio_base,
+            vendedor_id,
+        )
+
+        return {
+            "mensaje": "Producto creado correctamente",
+            "producto": convertir_producto(producto),
+        }
+
     except TipoNoValido as e:
         raise HTTPException(status_code=422, detail=str(e))
-    except ProductoNoValido as e:
+    except (ProductoNoValido, EstadoNoValido) as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 
@@ -60,24 +102,18 @@ async def crear_producto(
     "/",
     response_model=list,
     summary="Listar productos",
-    description="Obtiene la lista de productos del catálogo.",
 )
-async def listar_productos(solo_activos: bool = True):
-    """
-    Listar todos los productos.
-    """
-    # Dado que aún no tenemos la BD, devolvemos un mensaje de ejemplo.
-    # En la implementación final, se llama al caso de uso con el repositorio real.
+async def listar_productos(
+    solo_activos: bool = True,
+    session: Session = Depends(get_session),
+):
+    use_case = crear_producto_use_case(session)
+
+    productos = use_case.listar(solo_activos=solo_activos)
+
     return [
-        {
-            "id": "demo-1",
-            "titulo": "Laptop Dell XPS 13",
-            "descripcion": "Computadora portátil de alta gama.",
-            "tipo": "FISICO",
-            "precio_base": 2500000.00,
-            "estado": "PUBLICADO",
-            "creado_en": "2026-01-15T00:00:00",
-        }
+        convertir_producto(producto)
+        for producto in productos
     ]
 
 
@@ -85,19 +121,19 @@ async def listar_productos(solo_activos: bool = True):
     "/{id_producto}",
     response_model=dict,
     summary="Consultar un producto",
-    description="Obtiene la información de un producto por su ID.",
 )
-async def obtener_producto(id_producto: str):
-    """
-    Consultar un producto por ID.
-    """
-    # Por ahora devolvemos un producto de ejemplo.
-    return {
-        "id": id_producto,
-        "titulo": "Laptop Dell XPS 13",
-        "descripcion": "Computadora portátil de alta gama.",
-        "tipo": "FISICO",
-        "precio_base": 2500000.00,
-        "estado": "PUBLICADO",
-        "creado_en": "2026-01-15T00:00:00",
-    }
+async def obtener_producto(
+    id_producto: str,
+    session: Session = Depends(get_session),
+):
+    use_case = crear_producto_use_case(session)
+
+    producto = use_case.buscar(id_producto)
+
+    if producto is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Producto no encontrado",
+        )
+
+    return convertir_producto(producto)

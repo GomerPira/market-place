@@ -21,7 +21,13 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional, List
 
-from ..value_objects import TipoProducto, EstadoProducto, PrecioNoValido, EstadoNoValido
+from ..value_objects import (
+    TipoProducto,
+    EstadoProducto,
+    TipoNoValido,
+    PrecioNoValido,
+    EstadoNoValido,
+)
 from ..value_objects.precio import Precio
 
 

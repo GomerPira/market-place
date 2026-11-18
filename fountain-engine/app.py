@@ -9,6 +9,7 @@ Aloja el catálogo, el detalle de recurso, un carrito de compras (memoria)
 from __future__ import annotations
 
 import json
+import requests
 from pathlib import Path
 
 from flask import Flask, abort, jsonify, render_template, request
@@ -31,7 +32,32 @@ def load_config() -> dict:
 
 
 def load_resources() -> list[dict]:
-    return load_config().get("resources", [])
+    try:
+        response = requests.get(
+            "http://127.0.0.1:8000/productos/?solo_activos=false",
+            timeout=5
+        )
+        response.raise_for_status()
+
+        productos = response.json()
+
+        return [
+            {
+                "id": producto["id"],
+                "title": producto["titulo"],
+                "description": producto["descripcion"],
+                "category": producto["tipo"].lower(),
+                "price": producto["precio_base"],
+                "currency": producto["moneda"],
+                "status": producto["estado"],
+                "images": producto["imagenes"],
+            }
+            for producto in productos
+        ]
+
+    except requests.RequestException as error:
+        print(f"Error conectando con FastAPI: {error}")
+        return []
 
 
 def load_stats() -> dict:

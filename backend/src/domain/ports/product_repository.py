@@ -34,10 +34,10 @@ class ProductRepositoryOutputPort(ABC):
         pass
 
     @abstractmethod
-    def listar_activos(self) -> List[Producto]:
+    def listar(self, solo_activos: bool = True) -> List[Producto]:
         """
-        Lista los productos que podrían venderse actualmente.
-        Normalmente filtra por estado PUBLICADO o PENDIENTE.
+        Lista los productos.
+        Si solo_activos es True, filtra los productos disponibles.
         """
         pass
 

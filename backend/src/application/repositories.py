@@ -30,8 +30,9 @@ class ProductoRepoInMemory:
         if solo_activos:
             return [
                 p for p in self._productos.values()
-                if p.estado in ("DRAFT", "PENDIENTE", "PUBLICADO")
+                if p.estado.value in ("DRAFT", "PENDIENTE", "PUBLICADO")
             ]
+
         return list(self._productos.values())
 
     def listar_por_vendedor(self, id_vendedor: str) -> List[Producto]:
