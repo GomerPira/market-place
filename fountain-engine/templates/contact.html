@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section" id="contact">
+  <div class="card">
+    <h2 class="section__title">Contacto</h2>
+    {% if submitted %}
+      <div class="card success-card">
+        <p class="card__text">¡Gracias, {{ name }}! Te contactaremos pronto.</p>
+      </div>
+    {% else %}
+      <form method="post" action="{{ url_for('contact') }}" class="card__form">
+        <input type="text" name="name" placeholder="Tu nombre" required class="input" />
+        <input type="email" name="email" placeholder="Tu email" required class="input" autocomplete="email" />
+        <textarea name="message" rows="5" placeholder="Tu mensaje" required class="input"></textarea>
+        <button class="btn btn--primary" type="submit">Enviar mensaje</button>
+      </form>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

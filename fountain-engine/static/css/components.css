@@ -1,0 +1,243 @@
+/* UI primitives: buttons, cards, badges, forms, cart, alerts. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn--primary {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+  color: var(--color-ink);
+}
+
+.btn--primary:hover,
+.btn--primary:focus-visible {
+  background: var(--color-brand-strong);
+}
+
+.btn--secondary {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border);
+  color: var(--color-ink);
+}
+
+.btn--secondary:hover,
+.btn--secondary:focus-visible {
+  background: var(--color-surface);
+}
+
+.btn--sm {
+  padding: var(--space-1) var(--space-3);
+  font-size: 0.9rem;
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-card);
+}
+
+.card__text {
+  color: var(--color-ink-soft);
+  margin: 0;
+}
+
+.card__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 480px;
+}
+
+.card__form .input {
+  width: 100%;
+}
+
+.cart-count {
+  font-size: 0.8rem;
+  background: var(--color-danger);
+  color: #fff;
+  border-radius: 999px;
+  padding: 1px 6px;
+}
+
+.cart__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cart__item {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.cart__item-info {
+  flex: 1 1 220px;
+}
+
+.cart__item-actions {
+  flex: 0 0 120px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.cart__summary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-md);
+}
+
+.resource-detail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  margin-top: var(--space-4);
+}
+
+.resource-detail__image {
+  flex: 1 1 320px;
+  min-width: 200px;
+}
+
+.resource-detail__image img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+  display: block;
+}
+
+.resource-detail__body {
+  flex: 1 1 480px;
+}
+
+.resource-detail__title {
+  font-size: 2rem;
+  margin: 0 0 var(--space-2);
+}
+
+.resource-detail__description {
+  color: var(--color-ink-soft);
+  margin: 0 0 var(--space-4);
+}
+
+.resource-detail__meta {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-4);
+  font-size: 1rem;
+}
+
+.resource-detail__meta div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.resource-detail__meta dt {
+  font-weight: 700;
+  min-width: 80px;
+}
+
+.resource-detail__actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-brand-strong);
+  margin-bottom: var(--space-3);
+}
+
+.empty {
+  text-align: center;
+  padding: var(--space-12);
+  color: var(--color-ink-soft);
+}
+
+.success-card {
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  background: var(--color-surface-muted);
+  border-radius: 999px;
+  padding: var(--space-1) var(--space-3);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-ink-soft);
+}
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.filter-bar__label {
+  font-weight: 600;
+}
+
+.select {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  font: inherit;
+}
+
+.input {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 1rem;
+}
+
+.input:focus-visible {
+  outline: 3px solid var(--focus-ring);
+}
+
+.cart__clear {
+  margin-top: var(--space-3);
+}

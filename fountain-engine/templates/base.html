@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="{{ config.get('tagline', 'Marketplace de recursos de programación web') }}" />
+  <title>{% block title %}{{ config.get('name', 'Fountain Engine Marketplace') }}{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/marketplace.css') }}" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-header__inner">
+      <a class="brand" href="{{ url_for('home') }}">
+        <span class="brand__icon" aria-hidden="true">⏣</span>
+        <span>Fountain Engine</span>
+      </a>
+      <nav class="nav" aria-label="Principal">
+        <a class="nav__link" href="{{ url_for('catalog') }}">Catálogo</a>
+        <a class="nav__link" href="{{ url_for('about') }}">Sobre el engine</a>
+        <a class="nav__link" href="{{ url_for('contact') }}">Contacto</a>
+        <a class="auth-btn" href="{{ url_for('cart_route') }}">Carrito <span class="cart-count" id="cart-count">0</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <p>Fountain Engine Marketplace · v{{ config.get('version', '1.0.0') }} · 2026</p>
+      <p>Basado en programacion_web_2026_2 · Aurora Banco</p>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
+</body>
+</html>

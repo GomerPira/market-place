@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero" id="home">
+  <div class="hero__content">
+    <h1 class="hero__title">Fountain Engine Marketplace</h1>
+    <p class="hero__description">
+      Recursos de programación web, componentes, documentación y arquitectura
+      para que construyas, vendas y compres software con solidez.
+    </p>
+    <div class="hero__actions">
+      <a class="btn btn--primary" href="{{ url_for('catalog') }}">Ver catálogo</a>
+      <a class="btn btn--secondary" href="{{ url_for('about') }}">Más información</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

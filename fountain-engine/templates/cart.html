@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+  <div class="card">
+    <h1 class="section__title">Carrito de compras</h1>
+    {% if cart | length == 0 %}
+      <p class="card__text">No hay productos en el carrito.</p>
+      <a class="btn" href="{{ url_for('catalog') }}">Seguir comprando</a>
+    {% else %}
+      <ul class="cart__list">
+        {% for resource_id, quantity in cart.items() %}
+          {% set resource = resources | selectattr('id', 'equalto', resource_id) | list | first %}
+          {% if resource %}
+          <li class="cart__item">
+            <div class="cart__item-info">
+              <h3>{{ resource.title }}</h3>
+              <p>Precio: {{ resource.price | currency }}</p>
+            </div>
+            <div class="cart__item-actions">
+              <span>Cantidad: {{ quantity }}</span>
+              <form method="post" action="{{ url_for('cart_route') }}" class="cart__form">
+                <label for="quantity-{{ resource.id }}">Cantidad:</label>
+                <input id="quantity-{{ resource.id }}" name="quantity" type="number" min="1" max="5" value="{{ quantity }}" class="select" />
+                <button class="btn btn--sm" type="submit">Actualizar</button>
+              </form>
+            </div>
+          </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+      <div class="cart__summary">
+        <p>Subtotal: <strong>{{ subtotal | currency }}</strong></p>
+        <p>Total: <strong>{{ total | currency }}</strong></p>
+        <a class="btn btn--primary" href="{{ url_for('checkout') }}">Finalizar compra</a>
+        <form method="post" action="{{ url_for('cart_route') }}" class="cart__clear">
+          <button class="btn btn--secondary" type="submit">Vaciar carrito</button>
+        </form>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

@@ -10,6 +10,8 @@ No contiene reglas de negocio. Solo estructura de tabla.
 
 from datetime import datetime
 
+from decimal import Decimal
+
 from sqlalchemy import Boolean, Column, DateTime, DECIMAL, Enum, Integer, String, Text
 from sqlalchemy.orm import relationship
 

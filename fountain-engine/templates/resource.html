@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section">
+  <div class="card">
+    <a class="back-link" href="{{ url_for('catalog') }}">← Volver al catálogo</a>
+    <div class="resource-detail">
+      <div class="resource-detail__image">
+        <img src="{{ url_for('static', filename='img/placeholder.svg') }}" alt="Ilustración del recurso {{ resource.title }}" />
+      </div>
+      <div class="resource-detail__body">
+        <h1 class="resource-detail__title">{{ resource.title }}</h1>
+        <p class="resource-detail__description">{{ resource.description }}</p>
+        <dl class="resource-detail__meta">
+          <div>
+            <dt>Categoría</dt>
+            <dd>{{ resource.category | upper }}</dd>
+          </div>
+          <div>
+            <dt>Licencia</dt>
+            <dd>{{ resource.license }}</dd>
+          </div>
+          <div>
+            <dt>Precio</dt>
+            <dd><strong>{{ resource.price | currency }}</strong></dd>
+          </div>
+        </dl>
+        <div class="resource-detail__actions">
+          <button class="btn btn--primary add-to-cart" type="button" data-id="{{ resource.id }}">
+            Añadir al carrito
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

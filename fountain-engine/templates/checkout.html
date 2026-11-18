@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if completed %}
+<section class="section">
+  <div class="card success-card">
+    <h1 class="section__title">¡Compra realizada!</h1>
+    <p class="card__text">Gracias, {{ email }}. Hemos recibido tu compra de manera segura.</p>
+    <a class="btn" href="{{ url_for('home') }}">Continuar</a>
+  </div>
+</section>
+{% else %}
+<section class="section">
+  <div class="card">
+    <h1 class="section__title">Checkout</h1>
+    <form method="post" action="{{ url_for('checkout') }}" class="card__form">
+      <input type="email" name="email" placeholder="Tu email" required class="input" autocomplete="email" />
+      <input type="password" name="token" placeholder="Token de pago" required class="input" autocomplete="off" />
+      <button class="btn btn--primary" type="submit">Pagar</button>
+    </form>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

@@ -37,7 +37,7 @@ class VarianteProducto:
 
     def __post_init__(self):
         """Valida que el precio adicional sea correcto."""
-        if self.precio_adicicional is None or self.precio_adicional < 0:
+        if self.precio_adicional is None or self.precio_adicional < 0:
             raise PrecioNoValido(
                 f"Precio adicional inválido: {self.precio_adicional}. "
                 f"Debe ser >= 0."

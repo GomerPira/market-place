@@ -1,0 +1,51 @@
+{
+  "name": "Fountain Engine Marketplace",
+  "tagline": "Recursos de programación web y desarrollo en un solo lugar",
+  "version": "1.0.0",
+  "theme": {
+    "brand": "#f2c94c",
+    "brandStrong": "#d9a900",
+    "brandSoft": "rgba(242, 201, 76, 0.12)",
+    "ink": "#202124",
+    "inkSoft": "#5f6368",
+    "surface": "#ffffff",
+    "surfaceMuted": "#f5f6f7",
+    "border": "#d9dde2",
+    "success": "#237a57",
+    "warning": "#a76500",
+    "danger": "#b42318",
+    "fontBody": "'Atkinson Hyperlegible', 'Trebuchet MS', sans-serif"
+  },
+  "resources": [
+    {
+      "id": "rx-001",
+      "title": "React Design System Starter",
+      "category": "frontend",
+      "price": 19.90,
+      "currency": "usd",
+      "description": "Kit de componentes React con tokens de diseño, responsive y accesible.",
+      "license": "MIT",
+      "tags": ["react", "css", "components", "ui"]
+    },
+    {
+      "id": "rx-002",
+      "title": "Bank API Docs Tailwind Template",
+      "category": "documentation",
+      "price": 29.90,
+      "currency": "usd",
+      "description": "Documentación técnica lista para publicar en producción.",
+      "license": "MIT",
+      "tags": ["docs", "tailwind", "api"]
+    },
+    {
+      "id": "rx-003",
+      "title": "Hexagonal Auth Example",
+      "category": "backend",
+      "price": 49.90,
+      "currency": "usd",
+      "description": "Arquitectura hexagonal con JWT, roles y seguridad básica.",
+      "license": "MIT",
+      "tags": ["backend", "node", "authentication", "typescript"]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="section" id="catalog">
+  <div class="filter-bar" role="search">
+    <label class="filter-bar__label" for="category-filter">Categoría</label>
+    <select id="category-filter" class="select" aria-label="Filtrar por categoría">
+      <option value="all">Todas</option>
+      <option value="frontend">Frontend</option>
+      <option value="backend">Backend</option>
+      <option value="documentation">Documentación</option>
+    </select>
+    <label class="filter-bar__label" for="search-filter">Buscar</label>
+    <input id="search-filter" class="select" type="search" placeholder="Ej. react, api, auth..." aria-label="Buscar recursos" />
+  </div>
+
+  <div class="catalog">
+    <div class="catalog__list">
+      {% for resource in resources %}
+      <article class="resource-card">
+        <div class="resource-card__image">
+          <img src="{{ url_for('static', filename='img/placeholder.svg') }}" alt="Ilustración del recurso {{ resource.title }}" />
+        </div>
+        <div class="resource-card__body">
+          <h2 class="resource-card__title">{{ resource.title }}</h2>
+          <p class="resource-card__description">{{ resource.description }}</p>
+          <div class="resource-card__meta">
+            <span class="badge">{{ resource.category | upper }}</span>
+            <span class="badge">{{ resource.license }}</span>
+          </div>
+          <div class="resource-card__price">
+            <span>Su precio: <strong>{{ resource.price | currency }}</strong></span>
+            <button class="btn btn--sm btn--secondary add-to-cart" type="button" data-id="{{ resource.id }}">
+              Añadir al carrito
+            </button>
+          </div>
+        </div>
+      </article>
+      {% else %}
+      <div class="empty">No hay recursos disponibles.</div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
