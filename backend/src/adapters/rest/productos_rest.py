@@ -7,8 +7,10 @@ y el repositorio MySQL.
 """
 
 from decimal import Decimal
+from typing import Any, Dict, List, Optional, Union
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from ...application.use_cases.use_cases_producto import ProductUseCases
@@ -18,6 +20,7 @@ from ...domain.value_objects.errors import (
     ProductoNoValido,
     TipoNoValido,
     EstadoNoValido,
+    PrecioNoValido,
 )
 
 router = APIRouter(prefix="/productos", tags=["productos"])
@@ -60,6 +63,7 @@ def convertir_producto(producto):
             for variante in producto.variantes
         ],
     }
+
 
 
 @router.post(
@@ -137,3 +141,85 @@ async def obtener_producto(
         )
 
     return convertir_producto(producto)
+
+
+class ActualizarProductoBody(BaseModel):
+    """
+    Modelo Pydantic para recibir los datos de actualización de un producto.
+
+    Todos los campos son opcionales. Los valores omitidos se conservan.
+    """
+
+    titulo: Optional[str] = None
+    descripcion: Optional[str] = None
+    tipo: Optional[str] = None
+    precio_base: Optional[Dict[str, Any]] = None
+    estado: Optional[str] = None
+    vendedor_id: Optional[str] = None
+    imagenes: Optional[List[str]] = None
+    peso_kg: Optional[Union[Decimal, str]] = None
+    dimensiones: Optional[Dict[str, Any]] = None
+    variantes: Optional[List[Dict[str, Any]]] = None
+
+
+@router.put(
+    "/{id_producto}",
+    response_model=dict,
+    summary="Actualizar un producto existente",
+    status_code=status.HTTP_200_OK,
+)
+async def actualizar_producto(
+    id_producto: str,
+    body: ActualizarProductoBody,
+    session: Session = Depends(get_session),
+):
+    try:
+        use_case = crear_producto_use_case(session)
+
+        data = body.model_dump(exclude_unset=True)
+
+        producto = use_case.actualizar(id_producto, data)
+
+        if producto is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Producto no encontrado",
+            )
+
+        return {
+            "mensaje": "Producto actualizado correctamente",
+            "producto": convertir_producto(producto),
+        }
+
+    except TipoNoValido as e:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e))
+    except PrecioNoValido as e:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e))
+    except (ProductoNoValido, EstadoNoValido) as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+@router.delete(
+    "/{id_producto}",
+    response_model=dict,
+    summary="Eliminar un producto",
+    status_code=status.HTTP_200_OK,
+)
+async def eliminar_producto(
+    id_producto: str,
+    session: Session = Depends(get_session),
+):
+    use_case = crear_producto_use_case(session)
+
+    producto = use_case.eliminar(id_producto)
+
+    if producto is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Producto no encontrado",
+        )
+
+    return {
+        "mensaje": "Producto eliminado correctamente",
+        "producto": convertir_producto(producto),
+    }
+

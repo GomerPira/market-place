@@ -43,3 +43,13 @@ class ProductoRepoInMemory:
 
     def existe(self, id_producto: str) -> bool:
         return id_producto in self._productos
+
+    def actualizar(self, producto: Producto) -> Producto:
+        """
+        Actualiza un producto existente en el repositorio en memoria.
+        Si el producto no existe, lanza un KeyError.
+        """
+        if producto.id not in self._productos:
+            raise KeyError(f"Producto no encontrado: {producto.id}")
+        self._productos[producto.id] = producto
+        return producto

@@ -128,6 +128,30 @@ class Producto:
         """
         return self.precio_base + variante.precio_adicional
 
+    def actualizar(self, **campos) -> "Producto":
+        """
+        Devuelve una nueva instancia con los campos proporcionados.
+        Los campos omitidos se conservan del producto actual.
+
+        Este método mantiene la inmutabilidad del dominio: se crea
+        una nueva entidad en lugar de modificar la existente.
+        """
+        return Producto(
+            id=self.id,
+            titulo=campos.get("titulo", self.titulo),
+            descripcion=campos.get("descripcion", self.descripcion),
+            tipo=campos.get("tipo", self.tipo),
+            precio_base=campos.get("precio_base", self.precio_base),
+            estado=campos.get("estado", self.estado),
+            imagenes=campos.get("imagenes", self.imagenes),
+            peso_kg=campos.get("peso_kg", self.peso_kg),
+            dimensiones=campos.get("dimensiones", self.dimensiones),
+            creado_en=self.creado_en,
+            actualizado_en=datetime.utcnow(),
+            variantes=campos.get("variantes", self.variantes),
+            vendedor_id=campos.get("vendedor_id", self.vendedor_id),
+        )
+
     @property
     def es_activo(self) -> bool:
         """Un producto está activo si no está en estado BORRADOR, SUSPENDIDO ni ELIMINADO."""

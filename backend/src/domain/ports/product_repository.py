@@ -26,6 +26,18 @@ class ProductRepositoryOutputPort(ABC):
         pass
 
     @abstractmethod
+    def actualizar(self, producto: Producto) -> Producto:
+        """
+        Actualiza un producto existente.
+        Este método debe actuallyizar la entidad en el almacén persistente.
+
+        El método es opcional para implementaciones que deciden usar
+        `guardar` para cubrir la actualización, pero está definido
+        explícitamente para interfaces que necesitan dicha separación.
+        """
+        pass
+
+    @abstractmethod
     def buscar_por_id(self, id_producto: str) -> Optional[Producto]:
         """
         Busca un producto por su ID.

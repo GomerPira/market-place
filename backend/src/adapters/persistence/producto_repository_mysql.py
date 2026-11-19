@@ -82,6 +82,16 @@ class ProductoRepositoryMySql(ProductRepositoryOutputPort):
             self.db.rollback()
             raise
 
+    def actualizar(self, producto: Producto) -> Producto:
+        """
+        Actualiza un producto existente utilizando la misma lógica
+        que `guardar`, ya que la persistencia es la misma: se escribe
+        el estado actual del dominio en la base de datos. El método
+        `guardar` detecta por `id` si el registro ya existe y lo
+        actualiza en lugar de crearlo de nuevo.
+        """
+        return self.guardar(producto)
+
     def buscar_por_id(self, id_producto: str) -> Optional[Producto]:
         modelo = (
             self.db.query(ProductModel)
