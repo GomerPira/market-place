@@ -37,7 +37,7 @@ class ProductUseCases:
             id=f"prod_{self._generar_id()}"[:36],
             titulo=titulo,
             descripcion=descripcion,
-            tipo=TipoProducto(tipo),
+            tipo=TipoProducto(tipo.strip().upper()),
             precio_base=Precio(
                 moneda="COP",
                 cantidad=Decimal(str(precio_base))

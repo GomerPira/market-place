@@ -4,8 +4,13 @@
 {% if completed %}
 <section class="section">
   <div class="card success-card">
-    <h1 class="section__title">¡Compra realizada!</h1>
-    <p class="card__text">Gracias, {{ email }}. Hemos recibido tu compra de manera segura.</p>
+    <h1 class="section__title">¡Pedido creado correctamente!</h1>
+    <p class="card__text">Gracias, {{ email }}. Hemos recibido tu pedido.</p>
+
+    <p><strong>Número de pedido:</strong> {{ pedido.id }}</p>
+    <p><strong>Estado:</strong> {{ pedido.estado }}</p>
+    <p><strong>Total:</strong> ${{ pedido.monto_total }} COP</p>
+
     <a class="btn" href="{{ url_for('home') }}">Continuar</a>
   </div>
 </section>
@@ -13,10 +18,34 @@
 <section class="section">
   <div class="card">
     <h1 class="section__title">Checkout</h1>
+
+    {% if error %}
+      <p class="card__text">{{ error }}</p>
+    {% endif %}
+
     <form method="post" action="{{ url_for('checkout') }}" class="card__form">
-      <input type="email" name="email" placeholder="Tu email" required class="input" autocomplete="email" />
-      <input type="password" name="token" placeholder="Token de pago" required class="input" autocomplete="off" />
-      <button class="btn btn--primary" type="submit">Pagar</button>
+      <input
+        type="email"
+        name="email"
+        placeholder="Tu email"
+        value="{{ email or '' }}"
+        required
+        class="input"
+        autocomplete="email"
+      />
+
+      <input
+        type="text"
+        name="direccion_envio"
+        placeholder="Dirección de envío"
+        required
+        class="input"
+        autocomplete="street-address"
+      />
+
+      <button class="btn btn--primary" type="submit">
+        Crear pedido
+      </button>
     </form>
   </div>
 </section>

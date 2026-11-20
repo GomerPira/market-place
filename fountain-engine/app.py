@@ -34,7 +34,7 @@ def load_config() -> dict:
 def load_resources() -> list[dict]:
     try:
         response = requests.get(
-            "http://127.0.0.1:8000/productos/?solo_activos=false",
+            "http://127.0.0.1:8000/productos/?solo_activos=true",
             timeout=5
         )
         response.raise_for_status()
@@ -56,10 +56,10 @@ def load_resources() -> list[dict]:
         ]
 
     except requests.RequestException as error:
-        print(f"Error conectando con FastAPI: {error}")
+        print(f"Error cargando productos desde FastAPI: {error}")
         return []
 
-
+ 
 def load_stats() -> dict:
     if STATS_FILE.exists():
         try:
@@ -138,30 +138,94 @@ def create_app() -> Flask:
 
         resources = load_resources()
         subtotal = sum(
-            resource.get("price", 0) * qty
+            item.get("price", 0) * qty
             for resource_id, qty in cart.items()
-            if any(item["id"] == resource_id for item in resources)
+            for item in resources
+            if item.get("id") == resource_id
         )
         total = subtotal
         return render_template("cart.html", cart=cart, resources=resources, subtotal=subtotal, total=total)
 
+    
+    
     @app.route("/checkout", methods=["GET", "POST"])
     def checkout():
-        if request.method == "POST":
-            try:
-                data = request.get_json(force=True)
-            except Exception:
-                abort(400)
-            email = data.get("email", "").strip()
-            token = data.get("token", "")
-            if not email or "@" not in email or not token:
-                abort(400)
+        email = ""
+
+        if request.method == "GET":
+            return render_template(
+                "checkout.html",
+                completed=False,
+                email=email,
+                error=None
+            )
+
+        email = request.form.get("email", "").strip()
+        direccion = request.form.get("direccion_envio", "").strip()
+
+        if not email or "@" not in email or not direccion:
+            return render_template(
+                "checkout.html",
+                completed=False,
+                email=email,
+                error="Ingresa un email válido y una dirección de envío."
+            )
+
+        if not cart:
+            return render_template(
+                "checkout.html",
+                completed=False,
+                email=email,
+                error="Tu carrito está vacío."
+            )
+
+        items = [
+            {"producto_id": producto_id, "cantidad": cantidad}
+            for producto_id, cantidad in cart.items()
+        ]
+
+        try:
+            response = requests.post(
+                "http://127.0.0.1:8000/pedidos/",
+                json={
+                    "comprador_id": email,
+                    "direccion_envio": direccion,
+                    "items": items
+                },
+                timeout=15
+            )
+
+            response.raise_for_status()
+            resultado = response.json()
+            pedido = resultado.get("pedido", resultado)
+
+            cart.clear()
+
             stats = load_stats()
             stats["purchases"] = stats.get("purchases", 0) + 1
             save_stats(stats)
-            return render_template("checkout.html", completed=True, email=email)
 
-        return render_template("checkout.html", completed=False, email=None)
+            return render_template(
+                "checkout.html",
+                completed=True,
+                email=email,
+                pedido=pedido
+            )
+
+        except requests.RequestException as error:
+            respuesta = getattr(error, "response", None)
+            detalle = respuesta.text if respuesta is not None else str(error)
+
+            print(f"Error creando pedido: {error}")
+            print(f"Respuesta de FastAPI: {detalle}")
+
+            return render_template(
+                "checkout.html",
+                completed=False,
+                email=email,
+                error=f"No fue posible crear el pedido: {detalle}"
+            )
+
 
     @app.route("/about")
     def about():

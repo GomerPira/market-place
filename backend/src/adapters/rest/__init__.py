@@ -1,3 +1,4 @@
+
 """
 Adaptadores de entrada (REST) de NexusMarket.
 """
@@ -6,6 +7,7 @@ from fastapi import FastAPI
 
 from src.adapters.rest.productos_rest import router as productos_router
 from src.adapters.rest.inventario_rest import router as inventario_router
+from src.adapters.rest.pedidos_rest import router as pedidos_router
 
 
 def register_rest_adapters(app: FastAPI) -> None:
@@ -14,3 +16,5 @@ def register_rest_adapters(app: FastAPI) -> None:
     """
     app.include_router(productos_router)
     app.include_router(inventario_router)
+    app.include_router(pedidos_router)
+

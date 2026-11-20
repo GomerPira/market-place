@@ -14,4 +14,10 @@ __all__ = [
     "ProductModel",
     "VarianteModel",
     "InventarioModel",
+    "PedidoModel",
+    "ItemPedidoModel"
 ]
+from src.infrastructure.database.pedido_model import (
+    PedidoModel,
+    ItemPedidoModel
+)
